@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const slug = require('slugify')
+
 
 const porfolioBuilder = new mongoose.Schema({
         photo:{
@@ -21,6 +23,11 @@ const porfolioBuilder = new mongoose.Schema({
             required: true,
             min:[2,"Firt file must be filled.."]
            
+        },
+        username:{
+            type:String,
+            required: true,
+            unique: true
         },
     pronoun:{
         type:[String],
@@ -126,9 +133,37 @@ const porfolioBuilder = new mongoose.Schema({
             "Intenship",
             "Not Interested"
         ]
+    },
+    layout:{
+        style:{
+        type:[String],
+        enum:[
+            "Classic",
+            "Fancy",
+            "Formal",
+            "Plain"
+        ]
+    },
+    fontStyle:{
+        type:[String]
+    },
+    color:{
+        type:[String]
+    },
+    cursor:{
+        type:[String]
     }
-    
+    },
+    activity:{
+        accountCreatedOn:Date,
+        modified:Date,
+        isLogin:false
+    },
+    slug:String
 })
-
+porfolioBuilder.pre('save', function(next){
+    this.slug = slugify("builder" + this.username, {lower: true})
+    next()
+})
 module.exports = mongoose.model('Porfolio Builder',porfolioBuilder)
 
